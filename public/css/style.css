@@ -1,0 +1,61 @@
+.navbar{
+    height: 5rems;
+    background-color: aliceblue;
+}
+.fa-earth-americas{
+    color:darkorchid;
+    font-size: 2rem;
+}
+.nav-link{
+    color: #22222222;
+}
+
+/* footer */
+.f-info i{
+    font-size:1.2rem;
+    margin:0.5rem;
+    cursor: pointer;
+}
+.f-info i:hover{
+
+    transform: scale(1.1);
+}
+.f-info-links a{
+    text-decoration: none;
+    color: black;
+}
+.f-info-links a:hover{
+    text-decoration:underline;
+}
+.f-info{
+    height: 8rem;
+    background-color: #ebebeb;
+    flex-wrap: wrap;
+    flex-direction:column;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+/* cards */
+.container{
+    width: 100wh;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction:row;
+    justify-content: space-evenly;
+}
+.card{
+    /* border: 20px !important; */
+    margin:2rem;
+    /* cursor: pointer; */
+    transition: transform 0.5s ease,box-shadow 0.5s ease;
+    box-shadow: 3px 3px 10px 5px gray;
+}
+.card:hover{
+    transform: scale(1.1);
+    box-shadow: 3px 3px 10px 5px lightgreen;
+}
+.card-text>a:hover{
+    text-decoration: underline;
+}
