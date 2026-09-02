@@ -10,6 +10,9 @@ const userSchema = new Schema({
     }
 });
 
-userSchema.plugin(passportLocalMongoose);
+// console.log(passportLocalMongoose);
+// console.log(typeof passportLocalMongoose);
+
+userSchema.plugin(passportLocalMongoose.default);
 
 module.exports = mongoose.model("User",userSchema);

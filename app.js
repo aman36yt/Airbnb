@@ -6,6 +6,10 @@ const ejsMate = require("ejs-mate");
 const session = require("express-session");
 const flash = require("connect-flash");
 
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user.js");
+
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 
@@ -21,6 +25,7 @@ app.engine("ejs",ejsMate);
 
 const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
+
 const {listingSchema} = require("./schema.js");
 const Review = require("./models/review.js");
 const {reviewSchema} = require("./schema.js");
@@ -49,6 +54,14 @@ app.get("/",(req,res)=>{
 
 app.use(session(sessionOptions));
 app.use(flash());
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
 app.use((req,res,next)=>{
     res.locals.successMsg  = req.flash("success");
     res.locals.deleteMsg = req.flash("delete");
@@ -57,14 +70,25 @@ app.use((req,res,next)=>{
     next(); 
 });
 
+// app.get("/demouser",async(req,res)=>{
+//     let demoUser = new User({
+//         email:"demon@gmail",
+//         username:"Iamdemo"
+//     });
+//     let regUser = await User.register(demoUser,"helloworld");
+//     res.send(regUser);
+// });
 
-const users = require("./routes/listing.js");
-app.use("/listings",users);
-
-const reviews = require("./routes/review.js");
-app.use("/listings/:id/reviews",reviews);
 
 
+const listingRouter = require("./routes/listing.js");
+app.use("/listings",listingRouter);
+
+const reviewRouter = require("./routes/review.js");
+app.use("/listings/:id/reviews",reviewRouter);
+
+const userRouter = require("./routes/user.js");
+app.use("/",userRouter);
 
 // Place this AFTER all your valid routes
 app.all("/{*splat}", (req, res, next) => {
