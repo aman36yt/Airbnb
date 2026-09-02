@@ -3,9 +3,16 @@ const app = express();
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
+const session = require("express-session");
+const flash = require("connect-flash");
+
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user.js");
 
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
+
 
 
 app.set("view engine","ejs");
@@ -18,6 +25,7 @@ app.engine("ejs",ejsMate);
 
 const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
+
 const {listingSchema} = require("./schema.js");
 const Review = require("./models/review.js");
 const {reviewSchema} = require("./schema.js");
@@ -29,19 +37,58 @@ async function main(){
 }main().then(()=>{console.log("DataBase Connected Succesfully!");
 }).catch((err)=>{console.log(err);
 });
-
+const sessionOptions = {
+    secret:"mysecretcodestring",
+    resave: false,
+    saveUninitialized:true,
+    cookie:{
+        expires:Date.now() + 7 * 24 * 60 * 60 * 1000,
+        maxAge:7 * 24 * 60 * 60 * 1000,
+        httpOnly:true,
+    }
+};
 
 app.get("/",(req,res)=>{
     res.send("HI,THis is Root!");
 });
 
-const users = require("./routes/listing.js");
-app.use("/listings",users);
+app.use(session(sessionOptions));
+app.use(flash());
 
-const reviews = require("./routes/review.js");
-app.use("/listings/:id/reviews",reviews);
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 
+app.use((req,res,next)=>{
+    res.locals.successMsg  = req.flash("success");
+    res.locals.deleteMsg = req.flash("delete");
+    res.locals.updateMsg = req.flash("update");
+    res.locals.errorMsg = req.flash("error");
+    next(); 
+});
+
+// app.get("/demouser",async(req,res)=>{
+//     let demoUser = new User({
+//         email:"demon@gmail",
+//         username:"Iamdemo"
+//     });
+//     let regUser = await User.register(demoUser,"helloworld");
+//     res.send(regUser);
+// });
+
+
+
+const listingRouter = require("./routes/listing.js");
+app.use("/listings",listingRouter);
+
+const reviewRouter = require("./routes/review.js");
+app.use("/listings/:id/reviews",reviewRouter);
+
+const userRouter = require("./routes/user.js");
+app.use("/",userRouter);
 
 // Place this AFTER all your valid routes
 app.all("/{*splat}", (req, res, next) => {
