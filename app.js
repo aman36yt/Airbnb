@@ -67,6 +67,7 @@ app.use((req,res,next)=>{
     res.locals.deleteMsg = req.flash("delete");
     res.locals.updateMsg = req.flash("update");
     res.locals.errorMsg = req.flash("error");
+    res.locals.currUser = req.user;
     next(); 
 });
 
