@@ -3,9 +3,12 @@ const app = express();
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
+const session = require("express-session");
+const flash = require("connect-flash");
 
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
+
 
 
 app.set("view engine","ejs");
@@ -29,11 +32,31 @@ async function main(){
 }main().then(()=>{console.log("DataBase Connected Succesfully!");
 }).catch((err)=>{console.log(err);
 });
-
+const sessionOptions = {
+    secret:"mysecretcodestring",
+    resave: false,
+    saveUninitialized:true,
+    cookie:{
+        expires:Date.now() + 7 * 24 * 60 * 60 * 1000,
+        maxAge:7 * 24 * 60 * 60 * 1000,
+        httpOnly:true,
+    }
+};
 
 app.get("/",(req,res)=>{
     res.send("HI,THis is Root!");
 });
+
+app.use(session(sessionOptions));
+app.use(flash());
+app.use((req,res,next)=>{
+    res.locals.successMsg  = req.flash("success");
+    res.locals.deleteMsg = req.flash("delete");
+    res.locals.updateMsg = req.flash("update");
+    res.locals.errorMsg = req.flash("error");
+    next(); 
+});
+
 
 const users = require("./routes/listing.js");
 app.use("/listings",users);
