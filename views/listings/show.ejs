@@ -8,7 +8,7 @@
         <img src="<%= listing.img %>" class="card-img-top show-img" alt="Listing_image">
         <div class="card-body">
             <p class="card-text">
-                
+                <i>Owned by :<%= listing.owner.username %></i><br>
                 <span>
                     <%= listing.description %> <br>
                     Price :₹<%= listing.price.toLocaleString("en-IN") %> <br>
@@ -19,6 +19,7 @@
         </div>
     </div>
     
+    <% if(currUser && currUser._id.equals(listing.owner._id)){ %>
     <div class="btns mb-4">
         <a class="btn btn-dark col-1 offset-3" href="/listings/<%= listing._id %>/edit">EDIT</a>
         
@@ -27,7 +28,9 @@
         </form>
 
     </div>
+    <% } %>
     <hr>
+    <% if(currUser){ %>
     <div class="col-8 offset-3">
         <h4>Leave a Review</h4>
         <form class="needs-validation" novalidate method="post" action="/listings/<%= listing._id %>/reviews">
@@ -45,6 +48,7 @@
             <button class="btn btn-outline-dark mb-3">Submit</button>
         </form>
     </div>
+    <% } %>
     <hr>
     <div class="col-8 offset-3">
         <h4>All Reviews</h4>
@@ -52,7 +56,7 @@
             <%   for(let review of listing.reviews){ %>
                 <div class="card review-card col-5 ms-3 mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Customer</h5>
+                        <h5 class="card-title"><b><i> @<%= review.author.username%>..</i></b></h5>
                         <div class="card-text"><%= review.comment %></div>
                         <div class="card-text">Rating :<%= review.rating %></div>
                         <div class="card-text"><%= review.createdAt.toString().split(" ").splice(0,4).join("-") %></div>
