@@ -93,3 +93,13 @@ body{
 .btns{
     display: flex;
 }
+
+
+/* map */
+
+/* body { margin: 0; padding: 0; } */
+#map { 
+    height: 400px;
+    width: 80vh;
+    border-radius: 10px;
+}
