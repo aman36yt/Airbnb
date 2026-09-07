@@ -53,7 +53,7 @@ const sessionOptions = {
 };
 
 app.get("/",(req,res)=>{
-    res.send("HI,THis is Root!");
+    res.render("./listings/home.ejs");
 });
 
 app.use(session(sessionOptions));
